@@ -6,7 +6,12 @@ export default async function handler(req, res) {
         const submissions = [];
         
         for (const blob of blobs) {
-            const response = await fetch(blob.url);
+            // إضافة التوكين لقراءة الملفات الخاصة
+            const response = await fetch(blob.url, {
+                headers: {
+                    'Authorization': `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`
+                }
+            });
             const text = await response.text();
             try {
                 submissions.push(JSON.parse(text));
